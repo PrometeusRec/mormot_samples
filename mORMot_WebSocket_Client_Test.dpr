@@ -34,6 +34,7 @@ procedure DoWSS;
 var ClientWS      : THttpClientWebSockets;
     WSSConnection : TWSSRequests;
     lProto        : TWebSocketProtocolChat;
+    readtest,
     msg           : RawUtf8;
 
 begin
@@ -41,8 +42,6 @@ begin
   lProto := TWebSocketProtocolChat.Create('TestWSS','',WSSConnection.DealWSSRequests);
   ClientWS := THttpClientWebSockets.Create;
   ClientWS.OnCallbackRequestProcess := nil;
-  while (not endConnection) do
-    ;
 
 //  ClientWS.Open('ws.postman-echo.com', '443', nlTcp, 10000, true);
 //  msg := ClientWS.WebSocketsUpgrade('raw', '', false, [], lProto, ''); // {   "op": "ping" }
@@ -59,6 +58,13 @@ begin
   ClientWS.Open('socketsbay.com', '443', nlTcp, 10000, true);
   msg := ClientWS.WebSocketsUpgrade('wss/v2/2/demo/', '', false, [], lProto, '');
   WSSResponses.Add('msg: ' + msg);
+  readtest := '';
+  While (not endConnection) and (readtest <> 'end') do
+    begin
+      ReadLn(readtest);
+      if (readtest <> 'end') then
+        ;
+    end;
 end;
 
 
