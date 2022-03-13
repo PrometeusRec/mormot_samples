@@ -1,4 +1,4 @@
-program Project31WinHTTPEchoServer;
+program WSSTest;
 
 {$APPTYPE CONSOLE}
 
