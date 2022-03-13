@@ -57,6 +57,7 @@ begin
 
   ClientWS.Open('socketsbay.com', '443', nlTcp, 10000, true);
   msg := ClientWS.WebSocketsUpgrade('wss/v2/2/demo/', '', false, [], lProto, '');
+
   WSSResponses.Add('msg: ' + msg);
   readtest := '';
   While (not endConnection) and (readtest <> 'end') do
