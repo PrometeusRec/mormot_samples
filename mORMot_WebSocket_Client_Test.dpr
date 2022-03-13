@@ -67,6 +67,7 @@ begin
     endConnection := false;
     WSSResponses := TStringList.Create;
     DoWSS;
+    WSSResponses.SaveToFile('WSS_RESPONSES.TXT');
   finally
     WSSResponses.Free;
   end;
