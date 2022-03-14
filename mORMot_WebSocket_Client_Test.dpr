@@ -20,7 +20,10 @@ procedure TWSSRequests.DealWSSRequests(Sender : TWebCrtSocketProcess; const Fram
 begin
   case Frame.opcode of
     focContinuation    : ;
-    focText            : WSSResponses.Add(Frame.payload);
+    focText            : begin
+                           WSSResponses.Add(Frame.payload);
+                           Writeln(Frame.payload);
+                         end;
     focBinary          : ;
     focConnectionClose : endConnection := true;
     focPing            : ;
@@ -36,38 +39,36 @@ var ClientWS      : THttpClientWebSockets;
     lProto        : TWebSocketProtocolChat;
     readtest,
     msg           : RawUtf8;
+    msg_out       : TWebSocketFrame;
 
 begin
   WSSConnection := TWSSRequests.Create;
-  lProto := TWebSocketProtocolChat.Create('TestWSS','',WSSConnection.DealWSSRequests);
+  lProto := TWebSocketProtocolChat.Create('','',WSSConnection.DealWSSRequests);
   ClientWS := THttpClientWebSockets.Create;
   ClientWS.OnCallbackRequestProcess := nil;
 
-//  ClientWS.Open('ws.postman-echo.com', '443', nlTcp, 10000, true);
-//  msg := ClientWS.WebSocketsUpgrade('raw', '', false, [], lProto, ''); // {   "op": "ping" }
+  ClientWS.Open('ws.postman-echo.com', '443', nlTcp, 10000, true);
+  msg := ClientWS.WebSocketsUpgrade('raw', '', false, [], lProto, ''); // {   "op": "ping" }
 
 //  ClientWS.Open('demo.piesocket.com', '443', nlTcp, 10000, true);
 //  msg := ClientWS.WebSocketsUpgrade('v3/channel_1?api_key=oCdCMcMPQpbvNjUIzqtvF1d2X2okWpDQj4AwARJuAgtjhzKxVEjQU6IdCjwm&notify_self', '', false, [], lProto, '');
 
-//  ClientWS.Open('stream.data.sandbox.alpaca.markets', '443', nlTcp, 10000, true);
-//  msg := ClientWS.WebSocketsUpgrade('v2/iex', '', false, [], lProto, '');
-
-//  ClientWS.Open('ws.blockchain.info', '443', nlTcp, 10000, true); // {   "op": "ping" }
-//  msg := ClientWS.WebSocketsUpgrade('inv', '', false, [], lProto, '');
-
-  ClientWS.Open('socketsbay.com', '443', nlTcp, 10000, true);
-  msg := ClientWS.WebSocketsUpgrade('wss/v2/2/demo/', '', false, [], lProto, '');
+//  ClientWS.Open('socketsbay.com', '443', nlTcp, 10000, true);
+//  msg := ClientWS.WebSocketsUpgrade('wss/v2/2/demo/', '', false, [], lProto, '');
 
   WSSResponses.Add('msg: ' + msg);
   readtest := '';
   While (not endConnection) and (readtest <> 'end') do
     begin
       ReadLn(readtest);
+      WSSResponses.Add(readtest);
+      msg_out.opcode := focText;
+      msg_out.payload := readtest;
+      ClientWS.WebSockets.SendFrame(msg_out);
       if (readtest <> 'end') then
         ;
     end;
 end;
-
 
 begin
   try
